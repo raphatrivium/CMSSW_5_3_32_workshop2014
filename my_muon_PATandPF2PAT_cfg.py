@@ -110,6 +110,10 @@ getattr(process,"pfNoMuon"+postfix).verbose = False
 
 #MC particle match
 #-------------------------------------------
+from SUSYBSMAnalysis.Zprime2muAnalysis.PATTools import pruneMCLeptons, addMuonMCClassification
+pruneMCLeptons(process, use_sim=True)
+                 
+## process.genSimLeptons.filter = cms.vstring('(abs(pdgId) == 13 || abs(pdgId) == 11)')
 
 #----------------------------------
 
