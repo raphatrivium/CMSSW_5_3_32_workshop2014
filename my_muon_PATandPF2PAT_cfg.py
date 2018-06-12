@@ -106,21 +106,44 @@ getattr(process,"pfNoMuon"+postfix).verbose = False
 #--------------------------------------------
 #End Particle Flow
 
-
-
 #MC particle match
 #-------------------------------------------
-from SUSYBSMAnalysis.Zprime2muAnalysis.PATTools import pruneMCLeptons, addMuonMCClassification
-pruneMCLeptons(process, use_sim=True)
+#from SUSYBSMAnalysis.Zprime2muAnalysis.PATTools import pruneMCLeptons, addMuonMCClassification
+#pruneMCLeptons(process, use_sim=True)
                  
 ## process.genSimLeptons.filter = cms.vstring('(abs(pdgId) == 13 || abs(pdgId) == 11)')
-
 #----------------------------------
-
 
 #using GEN ang SIM.
 #---------------------------------------
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
+        src           = cms.InputTag("g4SimHits"),   ## use "famosSimHits" for FAMOS, "g4SimHits" for FULLSIM
+        setStatus     = cms.int32(9),
+        particleTypes = cms.vstring("mu+"),          ## picks also mu-, of course
+        filter        = cms.vstring(""), ##("pt > 0.5"),  ## just for testing
+        makeMotherLink = cms.bool(True),
+        writeAncestors = cms.bool(True),            ## save also the intermediate GEANT ancestors of the muons
+        genParticles   = cms.InputTag("genParticles"),
+)
 
+process.patDefaultSequence.replace(process.muonMatch,process.inFlightMuons + process.muonMatch)
+
+process.muMatch1 = process.muonMatch.clone(mcStatus = [1,3,8])
+process.muMatch9 = process.muonMatch.clone(mcStatus = [9], matched = cms.InputTag("inFlightMuons"), maxDeltaR = 1.0)
+
+process.patDefaultSequence.replace(
+    process.muonMatch,
+    process.muMatch1 +
+    process.muMatch9
+    )
+
+## particles source to be used for the matching
+## add input(s) with MC match information
+process.patMuons.genParticleMatch = cms.VInputTag(
+    cms.InputTag("muMatch1"),
+    cms.InputTag("muMatch9"),
+)
 #----------------------------------------------------------
 
 
