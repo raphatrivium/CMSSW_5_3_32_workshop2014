@@ -11,12 +11,13 @@ $cd CMSDAS/
 
 Step 2 - Crete the structure CMSSW
 $cmsrel CMSSW_5_3_32
-$cd CMSSW_5_3_7/src
+Some versions you must go to the folder "src/" as CMSSW_5_3_7 ("$cd CMSSW_5_3_7/src"). So you will notice an error when you compile the file (Step 4). But in this version you must go to folder:
+$cd CMSSW_5_3_32/
 
 Step 3 - Acess the cms environment
 $ cmsenv
 
-Step 4 - copy few packges and compile.
+Step 4 - copy few packges and compile it.
 $ cp -rf  /afs/cern.ch/user/h/hdyoo/public/CMSDAS2014/MuonExercise/
 $ scram b -j 8
 
